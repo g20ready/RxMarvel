@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <collectionReusableView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="U6b-Vx-4bR" customClass="MoreCollectionReusableView" customModule="RxMarvel" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rBZ-WW-j15">
+                    <rect key="frame" x="142" y="10" width="36" height="30"/>
+                    <state key="normal" title="More"/>
+                </button>
+                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="Q2E-bU-xPW">
+                    <rect key="frame" x="141.5" y="6.5" width="37" height="37"/>
+                    <color key="color" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                </activityIndicatorView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="Q2E-bU-xPW" firstAttribute="centerY" secondItem="U6b-Vx-4bR" secondAttribute="centerY" id="Cln-OF-j7z"/>
+                <constraint firstItem="rBZ-WW-j15" firstAttribute="top" secondItem="U6b-Vx-4bR" secondAttribute="top" constant="10" id="K4Q-WB-Gdr"/>
+                <constraint firstItem="rBZ-WW-j15" firstAttribute="centerY" secondItem="U6b-Vx-4bR" secondAttribute="centerY" id="pJ2-3p-Sas"/>
+                <constraint firstItem="Q2E-bU-xPW" firstAttribute="centerX" secondItem="U6b-Vx-4bR" secondAttribute="centerX" id="rFy-yw-HQR"/>
+                <constraint firstItem="VXr-Tz-HHm" firstAttribute="bottom" secondItem="rBZ-WW-j15" secondAttribute="bottom" constant="10" id="sid-FI-1jN"/>
+                <constraint firstItem="rBZ-WW-j15" firstAttribute="centerX" secondItem="U6b-Vx-4bR" secondAttribute="centerX" id="xy4-jl-aaB"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="VXr-Tz-HHm"/>
+            <connections>
+                <outlet property="loadingIndicator" destination="Q2E-bU-xPW" id="O5J-26-Y0n"/>
+                <outlet property="moreButton" destination="rBZ-WW-j15" id="8el-3y-EQD"/>
+            </connections>
+            <point key="canvasLocation" x="-325" y="126"/>
+        </collectionReusableView>
+    </objects>
+</document>
