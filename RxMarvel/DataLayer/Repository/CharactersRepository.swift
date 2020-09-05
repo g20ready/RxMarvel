@@ -25,9 +25,12 @@ struct CharactersRepository {
 
 extension CharactersRepository: CharactersService {
     
-    func getCharacters(order: Character.Order, offset: Int, limit: Int) -> Observable<[Character]> {
+    func getCharacters(nameStartsWith: String, order: Character.Order, offset: Int, limit: Int) -> Observable<[Character]> {
         return charactersService
-            .getCharacters(order: order.rawValue, offset: offset, limit: limit)
+            .getCharacters(nameStartsWith: nameStartsWith,
+                           order: order.rawValue,
+                           offset: offset,
+                           limit: limit)
             .flatMap({ (response: MVLCharactersResponse) -> Observable<[Character]> in
                 guard let results = response.data?.results, results.count > 0 else {
                     return Observable.error(Error.charactersListEmpty)

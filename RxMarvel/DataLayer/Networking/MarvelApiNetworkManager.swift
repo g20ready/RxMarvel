@@ -26,8 +26,11 @@ struct MarvelApiNetworkManager {
 
 extension MarvelApiNetworkManager: MarvelApiCharactersService {
     
-    func getCharacters(order: String, offset: Int, limit: Int) -> Observable<MVLCharactersResponse> {
-        return session.rx.request(route: MarvelApiRouter.characters(order: order, offset: offset, limit: limit))
+    func getCharacters(nameStartsWith: String, order: String, offset: Int, limit: Int) -> Observable<MVLCharactersResponse> {
+        return session.rx.request(route: MarvelApiRouter.characters(nameStartsWith: nameStartsWith,
+                                                                    order: order,
+                                                                    offset: offset,
+                                                                    limit: limit)).debug("asdads", trimOutput: false)
     }
     
 }

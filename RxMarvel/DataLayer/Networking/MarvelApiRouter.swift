@@ -10,7 +10,7 @@ import Alamofire
 
 enum MarvelApiRouter: URLRequestConvertible {
     
-    case characters(order: String, offset: Int, limit: Int)
+    case characters(nameStartsWith: String, order: String, offset: Int, limit: Int)
     
     var version: String {
         return "v1"
@@ -32,8 +32,9 @@ enum MarvelApiRouter: URLRequestConvertible {
     
     var queryStringParams: [URLQueryItem] {
         switch self {
-        case .characters(let order, let offset, let limit):
-            return [URLQueryItem(name: "orderBy", value: order),
+        case .characters(let nameStartsWith, let order, let offset, let limit):
+            return [URLQueryItem(name: "nameStartsWith", value: nameStartsWith),
+                    URLQueryItem(name: "orderBy", value: order),
                     URLQueryItem(name: "limit", value: String(limit)),
                     URLQueryItem(name: "offset", value: String(offset))]
         }

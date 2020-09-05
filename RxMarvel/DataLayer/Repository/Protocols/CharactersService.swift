@@ -10,6 +10,6 @@ import RxSwift
 
 protocol CharactersService {
     
-    func getCharacters(order: Character.Order, offset: Int, limit: Int) -> Observable<[Character]>
+    func getCharacters(nameStartsWith: String, order: Character.Order, offset: Int, limit: Int) -> Observable<[Character]>
     
 }

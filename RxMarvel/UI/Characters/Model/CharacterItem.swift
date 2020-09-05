@@ -8,12 +8,12 @@
 
 import RxDataSources
 
-enum CharacterItemm {
+enum CharacterItem {
     case loading
     case character(data: Character)
 }
 
-extension CharacterItemm: IdentifiableType {
+extension CharacterItem: IdentifiableType {
     
     var identity: Int {
         switch self {
@@ -26,9 +26,9 @@ extension CharacterItemm: IdentifiableType {
     
 }
 
-extension CharacterItemm: Equatable {
+extension CharacterItem: Equatable {
     
-    static func == (lhs: CharacterItemm, rhs: CharacterItemm) -> Bool {
+    static func == (lhs: CharacterItem, rhs: CharacterItem) -> Bool {
         switch (lhs, rhs) {
         case (.loading, .loading):
             return true
@@ -43,7 +43,7 @@ extension CharacterItemm: Equatable {
 
 struct CharacterSection {
     var header: String?
-    var items: [CharacterItemm]
+    var items: [CharacterItem]
 }
 
 extension CharacterSection: IdentifiableType, Equatable {
@@ -55,7 +55,7 @@ extension CharacterSection: IdentifiableType, Equatable {
 }
 
 extension CharacterSection: AnimatableSectionModelType {
-    typealias Item = CharacterItemm
+    typealias Item = CharacterItem
     
     init(original: Self, items: [Self.Item]) {
         self = original

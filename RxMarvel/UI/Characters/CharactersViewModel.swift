@@ -13,7 +13,7 @@ import RxCocoa
 struct CharactersViewModel {
     
     struct Input {
-        let reset: PublishRelay<()>
+        let search: PublishRelay<String>
         let more: PublishRelay<()>
     }
     
@@ -25,48 +25,77 @@ struct CharactersViewModel {
     let output: Output
     
     enum OffsetState {
+        case empty
+        case search(term: String)
         case more
-        case reset
+        
+        var isEmpty: Bool {
+            switch self {
+            case .empty:
+                return true
+            default:
+                return false
+            }
+        }
     }
     
-    typealias Offset = (state: OffsetState, offset: Int)
+    typealias Offset = (state: OffsetState, term: String, offset: Int)
     
     init(charactersService: CharactersService) {
-        let reset = PublishRelay<()>()
+        let search = PublishRelay<String>()
         let more = PublishRelay<()>()
         
         let limit = 20
         
-        let resetState = reset.map { OffsetState.reset }
+        let searchState = search.map { $0.count > 0 ? OffsetState.search(term: $0) : OffsetState.empty }
         let moreState = more.map { OffsetState.more }
         
-        let state = Observable.merge(resetState, moreState)
+        let state = Observable.merge(searchState, moreState)
         
-        let load = state.scan(Offset(OffsetState.reset, 0), accumulator: { (lastOffset, newOffsetState) in
+        let load = state.scan(Offset(OffsetState.empty, String.empty, 0), accumulator: { (lastOffset, newOffsetState) in
             switch newOffsetState {
-            case .reset:
-                return Offset(newOffsetState, 0)
+            case .empty:
+                return Offset(newOffsetState, String.empty, 0)
+            case .search(let term):
+                return Offset(newOffsetState, term, 0)
             case .more:
-                return Offset(newOffsetState, lastOffset.1 + limit)
+                return Offset(newOffsetState, lastOffset.1, lastOffset.2 + limit)
             }
-        }).startWith((OffsetState.reset, 0)).debug("load")
+        }).startWith((OffsetState.empty, String.empty, 0))
         
-        let characters = load.flatMap { offset in charactersService.getCharacters(order: .name,
-                                                                                  offset: offset.1,
-                                                                                  limit: limit).map { result in (offset.0, result) } }
-            .map { ($0.0, $0.1.map(CharacterItemm.character)) }
-            .scan([CharacterItemm](), accumulator: { (previousItems, newItems) in
+        let loadFrommNetwork = load.filter({ !$0.0.isEmpty})
+            .flatMap { offset in
+                charactersService.getCharacters(nameStartsWith: offset.1,
+                                                order: .name,
+                                                offset: offset.2,
+                                                limit: limit)
+                    .map { result in (offset.0, result) }
+                    .materialize()
+            }.share()
+        
+        let loadFromNetworkResult = loadFrommNetwork.compactMap { $0.element }
+        let loadFromNetworkError = loadFrommNetwork.compactMap { $0.error }
+        
+        let charactersOnLoad = loadFromNetworkResult
+            .map { ($0.0, $0.1.map(CharacterItem.character)) }
+            .scan([CharacterItem](), accumulator: { (previousItems, newItems) in
                 switch newItems.0 {
-                case .reset:
+                case .search:
                     return newItems.1
                 case .more:
                     return previousItems + newItems.1
+                default: // Will never reach since we filter for non empty
+                    return [CharacterItem]()
                 }
             })
             .map { [CharacterSection(header: "More", items: $0)] }
+        
+        let emptyCharacters = load.filter { $0.0.isEmpty }.map { _ in [CharacterSection]() }
+        
+        let characters = Observable.merge(charactersOnLoad, emptyCharacters)
             .asDriver(onErrorJustReturn: [CharacterSection]())
         
-        self.input = Input(reset: reset, more: more)
+        self.input = Input(search: search, more: more)
         self.output = Output(characters: characters)
     }
     

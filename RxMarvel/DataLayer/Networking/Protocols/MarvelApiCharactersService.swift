@@ -10,6 +10,6 @@ import RxSwift
 
 protocol MarvelApiCharactersService {
     
-    func getCharacters(order: String, offset: Int, limit: Int) -> Observable<MVLCharactersResponse>
+    func getCharacters(nameStartsWith: String, order: String, offset: Int, limit: Int) -> Observable<MVLCharactersResponse>
     
 }

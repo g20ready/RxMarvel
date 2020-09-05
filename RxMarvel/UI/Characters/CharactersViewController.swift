@@ -20,15 +20,17 @@ class CharactersViewController: UIViewController {
     
     var viewModel: CharactersViewModel!
     
+    @IBOutlet var searchBar: UISearchBar!
     @IBOutlet weak var charactersCollectionView: UICollectionView!
     @IBOutlet weak var charactersCollectionViewFlowLayout: UICollectionViewFlowLayout!
-    fileprivate let refreshControl = UIRefreshControl()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         assert(viewModel != nil, "CharactersViewController's viewModel cannot be nil")
         
+        setupSearchBar()
         setupCollectionView()
         setupMvvm()
     }
@@ -53,9 +55,13 @@ extension CharactersViewController: UICollectionViewDelegateFlowLayout {
 
 fileprivate extension CharactersViewController {
     
+    func setupSearchBar() {
+        navigationItem.titleView = searchBar
+    }
+    
     func setupCollectionView() {
         charactersCollectionView.delegate = self
-        charactersCollectionView.refreshControl = refreshControl
+        charactersCollectionView.keyboardDismissMode = .onDrag
         charactersCollectionView.register(CharacterCollectionViewCell.self)
         charactersCollectionView.register(UINib(nibName: MoreCollectionReusableView.nibName, bundle: nil),
                                           forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
@@ -63,13 +69,14 @@ fileprivate extension CharactersViewController {
         charactersCollectionViewFlowLayout.minimumLineSpacing = 10
         charactersCollectionViewFlowLayout.minimumLineSpacing = 10
         charactersCollectionViewFlowLayout.scrollDirection = .vertical
-        
     }
     
     func setupMvvm() {
         // Input
-        refreshControl.rx.controlEvent(.valueChanged)
-            .bind(to: viewModel.input.reset)
+        searchBar.rx.text.orEmpty
+            .debounce(.seconds(1), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .bind(to: viewModel.input.search)
             .disposed(by: disposeBag)
         
         // Output
@@ -99,11 +106,6 @@ fileprivate extension CharactersViewController {
             }
             return moreView
         })
-        
-        viewModel.output.characters
-            .drive(onNext: { [weak self] _ in
-                self?.refreshControl.endRefreshing()
-            }).disposed(by: disposeBag)
         
         viewModel.output.characters
             .drive(charactersCollectionView.rx.items(dataSource: dataSource))
