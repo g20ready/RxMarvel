@@ -11,6 +11,8 @@ import Alamofire
 
 extension Alamofire.Session : ReactiveCompatible { }
 
+struct NetworkUnreachableError: Error { }
+
 extension Reactive where Base: Alamofire.Session {
     
     func request<T: Decodable>(route: URLRequestConvertible) -> Observable<T> {
@@ -38,6 +40,14 @@ extension Reactive where Base: Alamofire.Session {
             request.resume()
             return Disposables.create {
                 request.cancel()
+            }
+        }.catchError { error in
+            let nsError = error as NSError
+            switch (nsError.domain, nsError.code) {
+            case ("Alamofire.AFError", 13):
+                return Observable.error(NetworkUnreachableError())
+            default:
+                return Observable.error(error)
             }
         }
     }

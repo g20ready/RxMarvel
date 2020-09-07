@@ -12,6 +12,9 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
+import Reachability
+import RxReachability
+
 import Nuke
 
 class CharactersViewController: UIViewController {
@@ -56,6 +59,11 @@ extension CharactersViewController: UICollectionViewDelegateFlowLayout {
 fileprivate extension CharactersViewController {
     
     func setupSearchBar() {
+        searchBar.returnKeyType = .done
+        searchBar.searchTextField.rx.controlEvent(.editingDidEndOnExit).asDriver()
+            .drive(onNext: { [weak self] _ in
+                self?.searchBar.endEditing(true)
+            }).disposed(by: disposeBag)
         navigationItem.titleView = searchBar
     }
     
@@ -109,6 +117,22 @@ fileprivate extension CharactersViewController {
         
         viewModel.output.characters
             .drive(charactersCollectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
+        // TODO: Update label with a custom view
+        viewModel.output.error
+            .map { errorMessage -> UIView? in
+                if let errorMessage = errorMessage {
+                    let label = UILabel()
+                    label.textAlignment = .center
+                    label.textColor = .black
+                    label.text = errorMessage
+                    return label
+                } else {
+                    return nil
+                }
+            }
+            .drive(charactersCollectionView.rx.backgroundView)
             .disposed(by: disposeBag)
     }
     

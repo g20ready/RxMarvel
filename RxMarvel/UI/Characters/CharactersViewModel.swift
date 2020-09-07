@@ -19,6 +19,8 @@ struct CharactersViewModel {
     
     struct Output {
         let characters: Driver<[CharacterSection]>
+        let error: Driver<String?>
+        let noNetworkError: Driver<()>
     }
     
     let input: Input
@@ -49,6 +51,16 @@ struct CharactersViewModel {
         
         let searchState = search.map { $0.count > 0 ? OffsetState.search(term: $0) : OffsetState.empty }
         let moreState = more.map { OffsetState.more }
+        
+        // Reset the error state when a new search starts
+        let errorResetOnSearch = searchState.map { state -> String? in
+            switch state {
+            case .empty:
+                return "Search for something"
+            default:
+                return nil
+            }
+        }
         
         let state = Observable.merge(searchState, moreState)
         
@@ -92,11 +104,31 @@ struct CharactersViewModel {
         
         let emptyCharacters = load.filter { $0.0.isEmpty }.map { _ in [CharacterSection]() }
         
+        let errorOnLoad = loadFromNetworkError.map { error -> String? in
+            switch error {
+            case is NetworkUnreachableError:
+                return "Network connection is down"
+            case let characterRepositoryError as CharactersRepository.Error:
+                switch characterRepositoryError {
+                case .charactersListEmpty:
+                    return "No results found for the given term."
+                }
+            default:
+                return "An unexpected error has occured"
+            }
+        }.debug("error", trimOutput: false)
+        
+        let error = Observable.merge(errorResetOnSearch, errorOnLoad).asDriver(onErrorJustReturn: nil)
+        
         let characters = Observable.merge(charactersOnLoad, emptyCharacters)
             .asDriver(onErrorJustReturn: [CharacterSection]())
         
+        let noNetworkError = Driver.just(())
+        
         self.input = Input(search: search, more: more)
-        self.output = Output(characters: characters)
+        self.output = Output(characters: characters,
+                             error: error,
+                             noNetworkError: noNetworkError)
     }
     
 }

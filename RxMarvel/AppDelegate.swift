@@ -9,9 +9,13 @@
 import UIKit
 import AlamofireEasyLogger
 
+import Reachability
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    let reachability = Reachability()
+    
     let alamofireLogger = FancyAppAlamofireLogger(
         logFunction: {
             print(try? $0.asURL().absoluteString ?? "")
@@ -20,6 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        try? reachability?.startNotifier()
         return true
     }
 

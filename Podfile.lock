@@ -4,6 +4,7 @@ PODS:
     - Alamofire (>= 5.0)
   - Differentiator (4.0.1)
   - Nuke (9.1.2)
+  - ReachabilitySwift (4.3.1)
   - RxBlocking (5.1.1):
     - RxSwift (~> 5)
   - RxCocoa (5.1.1):
@@ -13,6 +14,10 @@ PODS:
     - Differentiator (~> 4.0)
     - RxCocoa (~> 5.0)
     - RxSwift (~> 5.0)
+  - RxReachability (1.0.0):
+    - ReachabilitySwift (~> 4.3.1)
+    - RxCocoa (~> 5)
+    - RxSwift (~> 5)
   - RxRelay (5.1.1):
     - RxSwift (~> 5)
   - RxSwift (5.1.1)
@@ -26,6 +31,7 @@ DEPENDENCIES:
   - RxBlocking (~> 5)
   - RxCocoa (~> 5)
   - RxDataSources (~> 4.0)
+  - RxReachability
   - RxSwift (~> 5)
   - RxTest (~> 5)
 
@@ -35,9 +41,11 @@ SPEC REPOS:
     - AlamofireEasyLogger
     - Differentiator
     - Nuke
+    - ReachabilitySwift
     - RxBlocking
     - RxCocoa
     - RxDataSources
+    - RxReachability
     - RxRelay
     - RxSwift
     - RxTest
@@ -47,13 +55,15 @@ SPEC CHECKSUMS:
   AlamofireEasyLogger: 9a5f2048574b5fa1e02c3e7608599febee85beda
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   Nuke: dd2e6be6a34c042a7861e190632781d11f253026
+  ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
   RxBlocking: 5f700a78cad61ce253ebd37c9a39b5ccc76477b4
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
+  RxReachability: 21d3e96f39bc166a21c357e923f47dec148ca97b
   RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
   RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
   RxTest: 711632d5644dffbeb62c936a521b5b008a1e1faa
 
-PODFILE CHECKSUM: 77575339f5406d3b8ce3cf5324045d0041494abe
+PODFILE CHECKSUM: 045c6868c5ee8f87cffada7f830c8b3e5189e81c
 
 COCOAPODS: 1.9.3
